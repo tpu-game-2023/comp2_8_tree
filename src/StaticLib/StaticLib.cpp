@@ -69,6 +69,38 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* root = t->root;
+	
+	while (1)
+	{
+		if (key < root->key)
+		{
+			if (root->left == NULL)
+			{
+				root->left = p;
+
+				break;
+			}
+			root = root->left;
+		}
+		else if (key > root->key)
+		{
+			if (root->right == NULL)
+			{
+				root->right = p;
+
+				break;
+			}
+			root = root->right;
+		}
+		else
+		{
+			memcpy(root->value, p->value, strlen(p->value) + 1);
+			free(p);
+
+			break;
+		}
+	}
 
 	return true;
 }
@@ -77,11 +109,47 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
-	return NULL;
+	if (t == NULL)
+		return NULL;
+
+	node* root = t->root;
+
+	while (1)
+	{
+		if (root == NULL)
+			return NULL;
+
+		if (key < root->key)
+		{
+			root = root->left;
+		}
+		else if (key > root->key)
+		{
+			root = root->right;
+		}
+		else
+		{
+			return root->value;
+		}
+	}
+}
+
+void smallsearch(const node* root, void (*func)(const node* p))
+{
+	if (root == NULL)
+		return;
+
+	smallsearch(root->left, func);
+	func(root);
+	smallsearch(root->right, func);
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (t == NULL)
+		return;
+
+	smallsearch(t->root, func);
 }
