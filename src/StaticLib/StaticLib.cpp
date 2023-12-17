@@ -67,21 +67,79 @@ bool add(tree* t, int key, const char* value)
 		t->root = p;
 		return true;
 	}
+	node* n = t->root;
+	while (1)
+	{
+		if (n->key == p->key)
+		{
+			memcpy(n->value, p->value, strlen(p->value) + 1);
+			free(p);
+			break;
+		}
+		if (n->key > p->key)
+		{
+			if (!n->left)
+			{
+				n->left = p;
+				break;
+			}
+			n = n->left;
 
+		}
+		else
+		{
+			if (!n->right)
+			{
+				n->right = p;
+				break;
+			}
+			n = n->right;
+		}
+		
+	}
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-
 	return true;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
-	// ToDo: 実装する
-	return NULL;
-}
+	if (t == NULL) return NULL;
+	node* n = t->root;
+	while (1)
+	{
+		if (!n)
+		{
+			return NULL;
+		}
+		if (n->key == key)
+		{
+			return n->value;
+		}
 
+		if (n->key > key)
+		{
+			n = n->left;
+		}
+		else
+		{
+			n = n->right;
+		}
+	}
+	// ToDo: 実装する
+}
+void callFunc(const node* p, void (*func)(const node* p))
+{
+	if (p == NULL) return;
+	callFunc(p->left, func);
+	func(p);
+	callFunc(p->right, func);
+}
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
+	if (t == NULL) return;
+	callFunc(t->root, func);
+
 	// ToDo: 実装する
 }
