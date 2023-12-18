@@ -54,7 +54,31 @@ static node* generate(int key, const char* value)
 
 	return p;
 }
+static bool insert(node* origin, node* p)
+{
+	if (p->key < origin->key)
+	{
+		if (origin->left == NULL)
+		{
+			origin->left = p;
+			return(origin->left != NULL);
+		}
+		return insert(origin->left, p);
+	}
+	else if (origin->key < p->key)
+	{
+		if (origin->right == NULL)
+		{
+			origin->right = p;
+			return (origin->right != NULL);
+		}
+		return insert(origin->right, p);
+	}
 
+	strcpy_s(origin->value, 256, p->value);
+	free(p);
+	return true;
+}
 // keyの値を見てノードを追加する
 bool add(tree* t, int key, const char* value)
 {
@@ -69,38 +93,16 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-	node* q = t->root;
-
-	while (1) {
-		if (q->key == key)
-		{
-			memcpy(q->value, p->value, strlen(p->value) + 1);
-			free(p);
-			return true;
-		}
-		else if (q->key > key)
-		{
-			if (q->left == NULL) 
-			{
-				q->left = p;
-				return true;
-			}
-			else
-				q = q->left;
-		}
-		else
-		{
-			if (q->right == NULL) 
-			{
-				q->right = p;
-				return true;
-			}
-			else
-				q = q->right;
-		}
-	}
+	return insert(t->root, p);
 }
+static const char* finder(const node* p, int key)
+{
+	if (p == NULL)return NULL;
 
+	if (p->key == key)return p->value;
+
+	return finder((key < p->key) ? p->left : p->right, key);
+}
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
@@ -108,19 +110,7 @@ const char* find(const tree* t, int key)
 		return NULL;
 	// ToDo: 実装する
 	node* q = t->root;
-	while (1) 
-	{
-		if (q == NULL)
-			return NULL;
-		else if (q->key == key)
-			return q->value;
-		else if (q->key > key)
-			q = q->left;
-		else if (q ->key < key)
-			q = q->right;
-		else
-			return NULL;
-	}
+	return finder(t->root, key);
 }
 void searcher(const node* n, void (*func)(const node* p))
 {
