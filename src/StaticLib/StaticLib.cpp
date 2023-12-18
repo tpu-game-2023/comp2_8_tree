@@ -69,7 +69,41 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	node* nNode = t->root;
 
+	while (1) 
+	{
+		if (nNode->key == key)
+		{
+			memcpy(nNode->value, p->value, strlen(p->value) + 1);
+			free(p);
+			return true;
+		}
+		else if (nNode->key > key)
+		{
+			if (nNode->left == NULL) 
+			{
+				nNode->left = p;
+				return true;
+			}
+			else
+			{
+				nNode = nNode->left;
+			}
+		}
+		else
+		{
+			if (nNode->right == NULL)
+			{
+				nNode->right = p;
+				return true;
+			}
+			else
+			{
+				nNode = nNode->right;
+			}
+		}
+	}
 	return true;
 }
 
@@ -77,11 +111,39 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if(t==NULL)
 	return NULL;
+
+	node* nNode = t->root;
+	while (1) 
+	{
+		if (nNode == NULL)
+			return NULL;
+		else if (nNode->key == key)
+			return nNode->value;
+		else if (nNode->key > key)
+			nNode = nNode->left;
+		else if (nNode->key < key)
+			nNode = nNode->right;
+		else
+		{
+			return NULL;
+		}
+	}
+}
+void ser_passing(const node* n, void (*func)(const node* p))
+{
+	if (n == NULL)return;
+	ser_passing(n->left, func);
+	func(n);
+	ser_passing(n->right, func);
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	if (t == NULL)
+		return;
+	ser_passing(t->root, func);
 }
