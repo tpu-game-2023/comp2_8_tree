@@ -4,6 +4,19 @@
 
 #include "../include/lib_func.h"
 
+typedef struct node
+{
+	node_* left;
+	node_* right;
+	int key;
+	char value[256];
+}
+node;
+
+typedef struct
+{
+	node* root;
+}tree;
 
 // 2分木の初期化
 void initialize(tree* t)
@@ -67,7 +80,7 @@ bool add(tree* t, int key, const char* value)
 		t->root = p;
 		return true;
 	}
-
+	//ここを変えるべき部分だけどnodeを用いたif文が難しい
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
 	return true;
